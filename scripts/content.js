@@ -49,21 +49,24 @@ const raisinAddon = async function () {
 
 function addInterestOverview(accountDiv, depositMatch, eurNumberFormat) {
 
-    var quarterlyInterestSpan = document.createElement('span');
-    quarterlyInterestSpan.innerHTML = `Opgebouwde dit kwartaal: ${eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination))}`;
-    quarterlyInterestSpan.setAttribute("style", "margin-left: 36px; margin-right: 1rem;");
+    const quarterlyInterestSpan = createElement(
+        "span",
+        `Opgebouwde dit kwartaal: ${eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination))}`,
+        null,
+        "margin-left: 36px; margin-right: 1rem;");
 
-    var totalInterestPaidSpan = document.createElement('span');
-    totalInterestPaidSpan.innerHTML = `Totaal uitbetaalde rente: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination))}`;
-    totalInterestPaidSpan.setAttribute("style", "");
+    const totalInterestPaidSpan = createElement(
+        "span",
+        `Totaal uitbetaalde rente: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination))}`);
 
-    const lineDiv = document.createElement("div");
-    lineDiv.setAttribute("class", "row styles_depositCardMain___3a-Kb");
-    lineDiv.setAttribute("style", "justify-content: flex-start; padding: 0px 20px 15px 100px; font-size: 12px;")
-    lineDiv.appendChild(quarterlyInterestSpan);
-    lineDiv.appendChild(totalInterestPaidSpan);
+    const lineDiv = createElement(
+        "span",
+        null,
+        "row styles_depositCardMain___3a-Kb",
+        "justify-content: flex-start; padding: 0px 20px 15px 100px; font-size: 12px;",
+        [quarterlyInterestSpan, totalInterestPaidSpan]);
+
     accountDiv.insertBefore(lineDiv, accountDiv.childNodes[accountDiv.childNodes.length - 1]);
-
     accountDiv.childNodes[0].setAttribute("style", "padding-bottom: 0px;");
 }
 
@@ -72,38 +75,100 @@ function addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat) {
     const detailDiv = document.getElementById(`${depositMatch.deposit_id}-details`);
     detailDiv.onclick = () => {
         setTimeout(() => {
+            console.log("click");
 
-            const quarterlyInterestLabel = document.createElement("div");
-            quarterlyInterestLabel.setAttribute("class", "col-sm-4 styles_detailsInfoRowTitle___3N3Fe");
-            quarterlyInterestLabel.innerHTML = "Opgebouwd dit kwartaal";
+            if (accountDiv.lastChild.className === "styles_detailsInfo___ri_GI") {
 
-            const quarterlyInterestValue = document.createElement("div");
-            quarterlyInterestValue.setAttribute("class", "col-sm-8 styles_detailsInfoRowText___1ZVyd");
-            quarterlyInterestValue.innerHTML = eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination));
+                // Interest accrued this quarter.
+                const quarterlyInterestLabel = createElement(
+                    "div",
+                    "Opgebouwd dit kwartaal",
+                    "col-sm-4 styles_detailsInfoRowTitle___3N3Fe",
+                    null);
 
-            const quarterlyInterestRow = document.createElement("div");
-            quarterlyInterestRow.setAttribute("class", "row styles_detailsInfoRow___2YWtr");
-            quarterlyInterestRow.appendChild(quarterlyInterestLabel);
-            quarterlyInterestRow.appendChild(quarterlyInterestValue);
+                const quarterlyInterestValue = createElement(
+                    "div",
+                    eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination)),
+                    "col-sm-8 styles_detailsInfoRowText___1ZVyd",
+                    null);
 
-            const totalInterestPaidLabel = document.createElement("div");
-            totalInterestPaidLabel.setAttribute("class", "col-sm-4 styles_detailsInfoRowTitle___3N3Fe");
-            totalInterestPaidLabel.innerHTML = "Totaal uitbetaalde rente";
+                const quarterlyInterestRow = createElement(
+                    "div",
+                    null,
+                    `row styles_detailsInfoRow___2YWtr ${depositMatch.deposit_id}-interest-row`,
+                    null,
+                    [quarterlyInterestLabel, quarterlyInterestValue]);
 
-            const totalInterestPaidValue = document.createElement("div");
-            totalInterestPaidValue.setAttribute("class", "col-sm-8 styles_detailsInfoRowText___1ZVyd");
-            totalInterestPaidValue.innerHTML = eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination));
+                // Total interest paid.
+                const totalInterestPaidLabel = createElement(
+                    "div",
+                    "Totaal uitbetaalde rente",
+                    "col-sm-4 styles_detailsInfoRowTitle___3N3Fe",
+                    null);
 
-            const totalInterestPaidRow = document.createElement("div");
-            totalInterestPaidRow.setAttribute("class", "row styles_detailsInfoRow___2YWtr");
-            totalInterestPaidRow.appendChild(totalInterestPaidLabel);
-            totalInterestPaidRow.appendChild(totalInterestPaidValue);
+                const totalInterestPaidValue = createElement(
+                    "div",
+                    eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination)),
+                    "col-sm-8 styles_detailsInfoRowText___1ZVyd",
+                    null);
 
-            const tableDiv = accountDiv.childNodes[accountDiv.childNodes.length - 1];
-            tableDiv.insertBefore(quarterlyInterestRow, tableDiv.childNodes[6]);
-            tableDiv.insertBefore(totalInterestPaidRow, tableDiv.childNodes[7]);
-        }, 500);
+                const totalInterestPaidRow = createElement(
+                    "div",
+                    null,
+                    `row styles_detailsInfoRow___2YWtr ${depositMatch.deposit_id}-interest-row`,
+                    null,
+                    [totalInterestPaidLabel, totalInterestPaidValue]);
+
+                // Add to table.
+                const tableDiv = accountDiv.childNodes[accountDiv.childNodes.length - 1];
+                tableDiv.insertBefore(quarterlyInterestRow, tableDiv.childNodes[6]);
+                tableDiv.insertBefore(totalInterestPaidRow, tableDiv.childNodes[7]);
+            }
+        }, 250);
     }
+}
+
+function createElement(type, innerHTML, className, style, children) {
+
+    const element = document.createElement(type);
+    element.innerHTML = innerHTML;
+
+    if (className) {
+        element.setAttribute("class", className);
+    }
+
+    if (style) {
+        element.setAttribute("style", style);
+    }
+
+    if (children) {
+        for (let idx = 0; idx < children.length; idx++) {
+            element.appendChild(children[idx]);
+        }
+    }
+
+    return element;
+}
+
+function waitForElement(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
 }
 
 window.onload = () => raisinAddon();;
