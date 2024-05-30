@@ -25,6 +25,8 @@ const raisinAddon = async function () {
                 }
             });
             const deposits = await depositsResponse.json();
+            
+            const eurNumberFormat = new Intl.NumberFormat(customer.locale, { style: "currency", currency: "EUR" });
 
             for (let idx = 0; idx < accountDivs.length; idx++) {
 
@@ -34,11 +36,11 @@ const raisinAddon = async function () {
                 if (depositMatch) {
 
                     var quarterlyInterestSpan = document.createElement('span');
-                    quarterlyInterestSpan.innerHTML = `Opgebouwde rente dit kwartaal: \&euro; ${parseFloat(depositMatch.total_accrued_interest_amount.denomination).toFixed(2)}`;
+                    quarterlyInterestSpan.innerHTML = `Opgebouwde rente dit kwartaal: ${eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination))}`;
                     quarterlyInterestSpan.setAttribute("style", "margin-left: 36px; margin-right: 1rem;");
 
                     var totalInterestPaidSpan = document.createElement('span');
-                    totalInterestPaidSpan.innerHTML = `Totaal uitbetaalde rente: \&euro; ${parseFloat(depositMatch.total_booked_interest_amount.denomination).toFixed(2)}`;
+                    totalInterestPaidSpan.innerHTML = `Totaal uitbetaalde rente: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination))}`;
                     totalInterestPaidSpan.setAttribute("style", "");
 
                     const lineDiv = document.createElement("div");
@@ -47,6 +49,8 @@ const raisinAddon = async function () {
                     lineDiv.appendChild(quarterlyInterestSpan);
                     lineDiv.appendChild(totalInterestPaidSpan);
                     accountDiv.insertBefore(lineDiv, accountDiv.childNodes[accountDiv.childNodes.length -1]);
+
+                    accountDiv.childNodes[0].setAttribute("style", "padding-bottom: 0px;");
                 }
             }
         }
