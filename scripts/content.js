@@ -3,17 +3,21 @@ console.log("Raisin add-on loaded");
 (async () => {
     
      setTimeout(async () => {
+    
         
+        // Check if you are on the account page.
         const accountDivs = document.querySelectorAll(".styles_depositCard___2se71");
 
         if (accountDivs.length > 0) {
-
+    
+            // Get customer data. This contains the account id.
             const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
                 method: "GET",
                 mode: "no-cors"
             });
             const customer = await customerResponse.json();
             
+            // Get the deposits. This response contains interest data
             const authToken = JSON.parse(localStorage.getItem("auth_token"));                        
             const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits?customer_id=${customer.bac_number}`, {
                 method: "GET",
