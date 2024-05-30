@@ -1,12 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Raisin add-on",
-    "description": "Base Level Extension",
-    "version": "1.0",
-    "host_permissions": [
-        "https://www.raisin.nl/",
-        "https://api2.weltsparen.de/"
-      ],
+    "description": "Add-on to enrich your Raisin experience",
+    "version": "1.0.0",
     "content_scripts": [
         {
             "js": [
