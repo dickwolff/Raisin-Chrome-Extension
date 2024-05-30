@@ -3,48 +3,48 @@
 const raisinAddon = async function () {
     console.log("Raisin add-on loaded");
 
-    setTimeout(async () => {
-        // Check if you are on the account page.
-        const accountDivs = document.querySelectorAll(".styles_depositCard___2se71");
+    // Wait for page to load.
+    await waitForElement(".styles_depositCard___2se71");
 
-        if (accountDivs.length > 0) {
+    // Check if you are on the account page.
+    const accountDivs = document.querySelectorAll(".styles_depositCard___2se71");
 
-            // Get customer data. This contains the account id.
-            const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
-                method: "GET",
-                mode: "no-cors"
-            });
-            const customer = await customerResponse.json();
+    if (accountDivs.length > 0) {
 
-            // Get the deposits. This response contains interest data
-            const authToken = JSON.parse(localStorage.getItem("auth_token"));
-            const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits?customer_id=${customer.bac_number}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${authToken.access_token}`
-                }
-            });
-            const deposits = await depositsResponse.json();
+        // Get customer data. This contains the account id.
+        const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
+            method: "GET",
+            mode: "no-cors"
+        });
+        const customer = await customerResponse.json();
 
-            const eurNumberFormat = new Intl.NumberFormat(customer.locale, { style: "currency", currency: "EUR" });
+        // Get the deposits. This response contains interest data
+        const authToken = JSON.parse(localStorage.getItem("auth_token"));
+        const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits?customer_id=${customer.bac_number}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${authToken.access_token}`
+            }
+        });
+        const deposits = await depositsResponse.json();
 
-            for (let idx = 0; idx < accountDivs.length; idx++) {
+        const eurNumberFormat = new Intl.NumberFormat(customer.locale, { style: "currency", currency: "EUR" });
 
-                const accountDiv = accountDivs[idx];
-                const depositMatch = deposits.find(d => d.deposit_id === accountDiv.id);
+        for (let idx = 0; idx < accountDivs.length; idx++) {
 
-                if (depositMatch) {
+            const accountDiv = accountDivs[idx];
+            const depositMatch = deposits.find(d => d.deposit_id === accountDiv.id);
 
-                    // Add interest to glance view.
-                    addInterestOverview(accountDiv, depositMatch, eurNumberFormat)
+            if (depositMatch) {
 
-                    // Add interest to table.
-                    addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat);
-                }
+                // Add interest to glance view.
+                addInterestOverview(accountDiv, depositMatch, eurNumberFormat)
+
+                // Add interest to table.
+                addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat);
             }
         }
-    }, 2000);
-
+    }
 }
 
 function addInterestOverview(accountDiv, depositMatch, eurNumberFormat) {
@@ -75,7 +75,6 @@ function addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat) {
     const detailDiv = document.getElementById(`${depositMatch.deposit_id}-details`);
     detailDiv.onclick = () => {
         setTimeout(() => {
-            console.log("click");
 
             if (accountDiv.lastChild.className === "styles_detailsInfo___ri_GI") {
 
@@ -171,4 +170,4 @@ function waitForElement(selector) {
     });
 }
 
-window.onload = () => raisinAddon();;
+window.onload = () => raisinAddon();
