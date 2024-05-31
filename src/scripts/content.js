@@ -79,7 +79,7 @@ function addCustomName(accountDiv, depositMatch, localStorageData) {
     null,
     `${depositMatch.deposit_id}-label`,
     null,
-    "margin-left: 1rem; border-radius: 4px; height: 24px; max-width: 24rem; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8125rem; border: 1px solid #d7d7d7; " +
+    "margin-left: 1rem; border-radius: 4px; height: 24px; max-width: 24rem; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; border: 1px solid #d7d7d7; " +
       (labelValue ? "background: #f5f5f5;" : "background: transparent"),
     [chipSpan]
   );
@@ -105,7 +105,7 @@ function addCustomName(accountDiv, depositMatch, localStorageData) {
     // Update css.
     chipDiv.setAttribute(
       "style",
-      "margin-left: 1rem; border-radius: 4px; height: 24px; max-width: 24rem; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8125rem; border: 1px solid #d7d7d7; " +
+      "margin-left: 1rem; border-radius: 4px; height: 24px; max-width: 24rem; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; border: 1px solid #d7d7d7; " +
         (labelValue ? "background: #f5f5f5;" : "background: transparent;")
     );
   };
