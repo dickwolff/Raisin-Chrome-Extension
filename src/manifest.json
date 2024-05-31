@@ -4,8 +4,8 @@
     "description": "Add-on to enrich your Raisin experience.",
     "version": "0.1.0",
     "icons": {
-        "48": "img/icon-48.jpg",
-        "128": "img/icon-128.jpg"
+        "48": "img/icon-48.png",
+        "128": "img/icon-128.png"
     },
     "content_scripts": [
         {
