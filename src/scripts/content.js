@@ -36,8 +36,9 @@ const raisinAddon = async function () {
 
     const eurNumberFormat = new Intl.NumberFormat(customer.locale, { style: "currency", currency: "EUR" });
 
-    const dataFromLocalStorageString = localStorage.getItem("raisinAddon");
-    const dataFromLocalStorage = JSON.parse(dataFromLocalStorageString) || { accounts: [] };
+    // Get user stored data from Chrome sync.
+    let dataFromSync = await chrome.storage.sync.get("raisinAddon");
+    dataFromSync = Object.hasOwn(dataFromSync, "raisinAddon") ? JSON.parse(dataFromSync.raisinAddon) : { accounts: [] };
 
     for (let idx = 0; idx < accountDivs.length; idx++) {
       const accountDiv = accountDivs[idx];
@@ -45,7 +46,7 @@ const raisinAddon = async function () {
 
       if (depositMatch) {
         // Add shadow naming
-        addCustomName(accountDiv, depositMatch, dataFromLocalStorage);
+        addCustomName(accountDiv, depositMatch, dataFromSync);
 
         // Add interest to glance view.
         addInterestOverview(accountDiv, depositMatch, eurNumberFormat);
@@ -57,13 +58,13 @@ const raisinAddon = async function () {
   }
 };
 
-function addCustomName(accountDiv, depositMatch, localStorageData) {
+function addCustomName(accountDiv, depositMatch, syncedData) {
   let labelValue = undefined;
 
   // Check if a label was set previously, if so store this.
-  const accountMatchIdx = localStorageData.accounts.findIndex((a) => a.id === depositMatch.deposit_id);
+  const accountMatchIdx = syncedData.accounts.findIndex((a) => a.id === depositMatch.deposit_id.hashCode());
   if (accountMatchIdx > -1) {
-    labelValue = localStorageData.accounts[accountMatchIdx].name;
+    labelValue = syncedData.accounts[accountMatchIdx].name;
   }
 
   const chipSpan = createElement(
@@ -77,7 +78,7 @@ function addCustomName(accountDiv, depositMatch, localStorageData) {
   const chipDiv = createElement(
     "div",
     null,
-    `${depositMatch.deposit_id}-label`,
+    null,
     null,
     "margin-left: 1rem; border-radius: 4px; height: 24px; max-width: 24rem; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; border: 1px solid #d7d7d7; " +
       (labelValue ? "background: #f5f5f5;" : "background: transparent"),
@@ -96,7 +97,7 @@ function addCustomName(accountDiv, depositMatch, localStorageData) {
     }
 
     // Update local storage.
-    updateLocalStorage(localStorageData, depositMatch.deposit_id, name);
+    syncStorage(syncedData, depositMatch.deposit_id, name);
 
     // Update the values on the screen.
     chipSpan.innerHTML = name;
@@ -168,14 +169,10 @@ function addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat) {
           null
         );
 
-        const quarterlyInterestRow = createElement(
-          "div",
-          null,
-          null,
-          `row styles_detailsInfoRow___2YWtr ${depositMatch.deposit_id}-interest-row`,
-          null,
-          [quarterlyInterestLabel, quarterlyInterestValue]
-        );
+        const quarterlyInterestRow = createElement("div", null, null, "row styles_detailsInfoRow___2YWtr", null, [
+          quarterlyInterestLabel,
+          quarterlyInterestValue,
+        ]);
 
         // Total interest paid.
         const totalInterestPaidLabel = createElement(
@@ -194,14 +191,10 @@ function addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat) {
           null
         );
 
-        const totalInterestPaidRow = createElement(
-          "div",
-          null,
-          null,
-          `row styles_detailsInfoRow___2YWtr ${depositMatch.deposit_id}-interest-row`,
-          null,
-          [totalInterestPaidLabel, totalInterestPaidValue]
-        );
+        const totalInterestPaidRow = createElement("div", null, null, "row styles_detailsInfoRow___2YWtr", null, [
+          totalInterestPaidLabel,
+          totalInterestPaidValue,
+        ]);
 
         // Add to table.
         const tableDiv = accountDiv.childNodes[accountDiv.childNodes.length - 1];
@@ -258,13 +251,13 @@ function waitForElement(selector) {
   });
 }
 
-function updateLocalStorage(currentData, accountId, newLabel) {
+function syncStorage(currentData, accountId, newLabel) {
   const accountMatchIdx = currentData.accounts.findIndex((a) => a.id === accountId);
 
   // If it does not exist, create a new record.
   if (accountMatchIdx === -1) {
     currentData.accounts.push({
-      id: accountId,
+      id: accountId.hashCode(),
       name: newLabel,
     });
   } else {
@@ -272,8 +265,8 @@ function updateLocalStorage(currentData, accountId, newLabel) {
     currentData.accounts[accountMatchIdx].name = newLabel;
   }
 
-  // Update localStorage.
-  localStorage.setItem("raisinAddon", JSON.stringify(currentData));
+  // Sync data to Chrome.
+  chrome.storage.sync.set({ raisinAddon: JSON.stringify(currentData) });
 }
 
 window.onload = () => raisinAddon();

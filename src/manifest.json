@@ -7,9 +7,13 @@
         "48": "img/icon-48.png",
         "128": "img/icon-128.png"
     },
+    "permissions": [
+        "storage"
+    ],
     "content_scripts": [
         {
             "js": [
+                "scripts/utils.js",
                 "scripts/i18n.js",
                 "scripts/content.js"                
             ],
