@@ -2,11 +2,12 @@
     "manifest_version": 3,
     "name": "Raisin add-on",
     "description": "Add-on to enrich your Raisin experience.",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "content_scripts": [
         {
             "js": [
-                "scripts/content.js"
+                "scripts/i18n.js",
+                "scripts/content.js"                
             ],
             "matches": [
                 "https://www.raisin.nl/savingglobal/*"
