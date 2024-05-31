@@ -5,7 +5,7 @@
 
 A Chrome extension that adds a few things to the Raisin UI.
 
-[![Download in the Chrome Web Store](https://developer.chrome.com/static/docs/webstore/branding/image/206x58-chrome-web-043497a3d766e.png)](https://chrome.google.com/webstore/detail/)
+[![Download in the Chrome Web Store](https://developer.chrome.com/static/docs/webstore/branding/image/206x58-chrome-web-bcb82d15b2486.png)](https://chrome.google.com/webstore/detail/)
 
 ## What does it to?
 
