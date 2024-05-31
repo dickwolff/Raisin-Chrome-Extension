@@ -131,14 +131,17 @@ function addInterestOverview(accountDiv, depositMatch, eurNumberFormat) {
     `${window.raisinAddon.i18n.totalInterestPaidOut}: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination))}`
   );
 
-  const interestDiv = createElement("div", null, null, "styles_mainInfo___3_4uI", "font-size: 12px; padding-top: 0px;", [
+  const mainInfoClassName = document.querySelector("div[class^=styles_mainInfo]").className;
+  const interestDiv = createElement("div", null, null, mainInfoClassName, "font-size: 12px; padding-top: 0px;", [
     quarterlyInterestSpan,
     totalInterestPaidSpan,
   ]);
 
-  const stylesLogoFillDiv = createElement("div", null, null, "styles_logo___xL43z", "height: 1rem;");
+  const logoClassName = document.querySelector("div[class^=styles_logo]").className;
+  const stylesLogoFillDiv = createElement("div", null, null, logoClassName, "height: 1rem;");
 
-  const lineDiv = createElement("div", null, null, "row styles_depositCardMain___3a-Kb", "justify-content: flex-start; padding-top: 0px;", [
+  const depositCardMainClassName = document.querySelector("div[class^='row styles_depositCardMain']").className;
+  const lineDiv = createElement("div", null, null, depositCardMainClassName, "justify-content: flex-start; padding-top: 0px;", [
     stylesLogoFillDiv,
     interestDiv,
   ]);
@@ -151,47 +154,44 @@ function addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat) {
   const detailDiv = document.getElementById(`${depositMatch.deposit_id}-details`);
   detailDiv.onclick = () => {
     setTimeout(() => {
-      if (accountDiv.lastChild.className === "styles_detailsInfo___ri_GI") {
+      if (accountDiv.lastChild.className.startsWith("styles_detailsInfo")) {
         // Interest accrued this quarter.
+        const detailsInfoRowTitleClassName = document.querySelector("div[class^='col-sm-4 styles_detailsInfoRowTitle']").className;
         const quarterlyInterestLabel = createElement(
           "div",
           window.raisinAddon.i18n.interestAccruedThisQuarter,
           null,
-          "col-sm-4 styles_detailsInfoRowTitle___3N3Fe",
+          detailsInfoRowTitleClassName,
           null
         );
 
+        const detailsInfoRowTextClassName = document.querySelector("div[class^='col-sm-8 styles_detailsInfoRowText']").className;
         const quarterlyInterestValue = createElement(
           "div",
           eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination)),
           null,
-          "col-sm-8 styles_detailsInfoRowText___1ZVyd",
+          detailsInfoRowTextClassName,
           null
         );
 
-        const quarterlyInterestRow = createElement("div", null, null, "row styles_detailsInfoRow___2YWtr", null, [
+        const detailsInfoRowClassName = document.querySelector("div[class^='row styles_detailsInfoRow']").className;
+        const quarterlyInterestRow = createElement("div", null, null, detailsInfoRowClassName, null, [
           quarterlyInterestLabel,
           quarterlyInterestValue,
         ]);
 
         // Total interest paid.
-        const totalInterestPaidLabel = createElement(
-          "div",
-          window.raisinAddon.i18n.totalInterestPaidOut,
-          null,
-          "col-sm-4 styles_detailsInfoRowTitle___3N3Fe",
-          null
-        );
+        const totalInterestPaidLabel = createElement("div", window.raisinAddon.i18n.totalInterestPaidOut, null, detailsInfoRowTitleClassName, null);
 
         const totalInterestPaidValue = createElement(
           "div",
           eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination)),
           null,
-          "col-sm-8 styles_detailsInfoRowText___1ZVyd",
+          detailsInfoRowTextClassName,
           null
         );
 
-        const totalInterestPaidRow = createElement("div", null, null, "row styles_detailsInfoRow___2YWtr", null, [
+        const totalInterestPaidRow = createElement("div", null, null, detailsInfoRowClassName, null, [
           totalInterestPaidLabel,
           totalInterestPaidValue,
         ]);
