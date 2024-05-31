@@ -98,7 +98,7 @@ function addCustomName(accountDiv, depositMatch, localStorageData) {
         // Update the values on the screen.
         chipSpan.innerHTML = name;
         labelValue = name;
-        
+
         // Update css.
         chipDiv.setAttribute("style", "margin-left: 1rem; border-radius: 4px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8125rem; border: 1px solid #d7d7d7; " + (labelValue ? "background: #f5f5f5;" : "background: transparent;"));
     }
@@ -114,19 +114,34 @@ function addInterestOverview(accountDiv, depositMatch, eurNumberFormat) {
         `Opgebouwde dit kwartaal: ${eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination))}`,
         null,
         null,
-        "margin-left: 36px; margin-right: 1rem;");
+        "margin-right: 1rem;");
 
     const totalInterestPaidSpan = createElement(
         "span",
         `Totaal uitbetaalde rente: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination))}`);
 
+    const interestDiv = createElement(
+        "div",
+        null,
+        null,
+        "styles_mainInfo___3_4uI",
+        "font-size: 12px; padding-top: 0px;",
+        [quarterlyInterestSpan, totalInterestPaidSpan]);
+
+    const stylesLogoFillDiv = createElement(
+        "div",
+        null,
+        null,
+        "styles_logo___xL43z",
+        "height: 1rem;");
+
     const lineDiv = createElement(
-        "span",
+        "div",
         null,
         null,
         "row styles_depositCardMain___3a-Kb",
-        "justify-content: flex-start; padding: 0px 20px 15px 100px; font-size: 12px;",
-        [quarterlyInterestSpan, totalInterestPaidSpan]);
+        "justify-content: flex-start; padding-top: 0px;",
+        [stylesLogoFillDiv, interestDiv]);
 
     accountDiv.insertBefore(lineDiv, accountDiv.childNodes[accountDiv.childNodes.length - 1]);
     accountDiv.childNodes[0].setAttribute("style", "padding-bottom: 0px;");
@@ -200,15 +215,15 @@ function createElement(type, innerHTML, id, className, style, children) {
     const element = document.createElement(type);
     element.innerHTML = innerHTML;
 
-    if (id) {
+    if (id != null) {
         element.setAttribute("id", className);
     }
 
-    if (className) {
+    if (className != null) {
         element.setAttribute("class", className);
     }
 
-    if (style) {
+    if (style != null) {
         element.setAttribute("style", style);
     }
 
