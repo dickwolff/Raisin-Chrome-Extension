@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Raisin add-on",
     "description": "Add-on to enrich your Raisin experience.",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "icons": {
         "48": "img/icon-48.png",
         "128": "img/icon-128.png"

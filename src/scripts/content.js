@@ -2,10 +2,10 @@ const raisinAddon = async function () {
   console.log("Raisin add-on loaded");
 
   // Wait for page to load.
-  await waitForElement(".styles_depositCard___2se71");
+  await waitForElement("div[class^=styles_depositCard]");
 
   // Check if you are on the account page.
-  const accountDivs = document.querySelectorAll(".styles_depositCard___2se71");
+  const accountDivs = document.querySelectorAll("div[class^=styles_depositCard]");
 
   if (accountDivs.length > 0) {
     // Get customer data. This contains the account id.
