@@ -20,7 +20,7 @@ The easiest way to use the extension is to head to the [Chrome Web Store]() and 
 ### Run locally
 
 1. Clone/download this repository.
-2. Head to your browser and type [`chrome://extensions`](chrome://extensions) in the address bar.
+2. Head to your browser and type `chrome://extensions` in the address bar.
 3. Click on the button that says `Load unpacked`.
 4. Navigate to the folder where you stored the repo (step 1)
 5. Select the `src` folder (don't go in it!)
