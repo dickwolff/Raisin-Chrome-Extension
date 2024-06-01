@@ -19,7 +19,7 @@ The extension runs only on specific pages, and re-uses your current authorizatio
 
 ### Install into browser
 
-The easiest way to use the extension is to head to the [Chrome Web Store]() and install the extension there.
+The easiest way to use the extension is to head to the [Chrome Web Store](https://chromewebstore.google.com/detail/raisin-add-on/babbbcheilomdpnkhecakajnojfbcphg) and install the extension there.
 
 ### Run locally
 
