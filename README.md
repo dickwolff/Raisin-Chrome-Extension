@@ -5,7 +5,7 @@
 
 An extension that adds a few things to the [Raisin](https://raisin.com) UI. Works in any Chrome based browser.
 
-[![Download in the Chrome Web Store](https://developer.chrome.com/static/docs/webstore/branding/image/206x58-chrome-web-bcb82d15b2486.png)](https://chrome.google.com/webstore/detail/)
+[![Download in the Chrome Web Store](https://developer.chrome.com/static/docs/webstore/branding/image/206x58-chrome-web-bcb82d15b2486.png)]([https://chrome.google.com/webstore/detail/](https://chromewebstore.google.com/detail/raisin-add-on/babbbcheilomdpnkhecakajnojfbcphg)
 
 _This extension is not affiliated with Raisin._
 
