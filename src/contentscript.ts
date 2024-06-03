@@ -1,15 +1,9 @@
-
-class RaisinAddon {
- 
-    public start() {
-
-    }
-}
+import { RaisinAddon } from "./addon";
 
 window.onload = () => {
 
-    console.log("Raisin add-on loaded!");
     let ra = new RaisinAddon();
-
-    ra.start();
+    ra.initialize();
+    
+    console.log("Raisin add-on loaded!");
 }
