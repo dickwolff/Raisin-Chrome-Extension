@@ -35,3 +35,7 @@ const i18n: any = {
         totalInterestPaidOut: "Intereses totales pagados",
     },
 }
+
+export {
+    i18n
+}

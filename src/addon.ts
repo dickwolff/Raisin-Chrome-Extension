@@ -1,6 +1,5 @@
 import { createElement, hashCode, observeUrlChange, syncStorage, waitForElement } from "./helpers";
-
-
+import { i18n } from "./i18n";
 
 class RaisinAddon {
 
@@ -10,13 +9,25 @@ class RaisinAddon {
 
     public async initialize() {
 
+        // Subscribe to route changes so the scripts can run on their respective pages.
+        observeUrlChange((url: string) => this.showCurrentPage(url));
+
+        // Show current page.
+        this.showCurrentPage(window.location.href);
+    }
+
+    private async loadInitialUserData() {
+
+        // If customer and i18n already loaded, don't do it again.
+        if (this.customer && this.i18n) {
+            return;
+        }
 
         // Get customer data. This contains the account id.
         const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
             method: "GET",
             mode: "no-cors",
         });
-
         this.customer = await customerResponse.json();
 
         // Check the user's locale. Set it to the default locale if it is also supported by the add-on.
@@ -27,14 +38,6 @@ class RaisinAddon {
             // Otherwise default to English.
             this.i18n = i18n["en"];
         }
-
-        // Subscribe to route changes so the scripts can run on their respective pages.
-        observeUrlChange((url: string) => this.showCurrentPage(url));
-
-        // Show current page.
-        this.showCurrentPage(window.location.href);
-
-        console.log("Raisin add-on loaded");
     }
 
     private showCurrentPage(route: string) {
@@ -50,6 +53,9 @@ class RaisinAddon {
     private async showMyInvestmentsPage() {
         // Wait for page to load.
         await waitForElement("div[class^=styles_depositCard]");
+
+        // Load customer data if not already loaded.
+        await this.loadInitialUserData();
 
         // Check if you are on the account page.
         const accountDivs = document.querySelectorAll("div[class^=styles_depositCard]");
@@ -96,6 +102,9 @@ class RaisinAddon {
     private async showDashboardPage() {
         // Wait for page to load.
         await waitForElement("div[class^=styles_interimDashboardDetailsWrapper]");
+
+        // Load customer data if not already loaded.
+        await this.loadInitialUserData();
 
         // Check if you are on the account page.
         const dashboardDiv = document.querySelector("div[class^=styles_interimDashboardDetailsWrapper]");
