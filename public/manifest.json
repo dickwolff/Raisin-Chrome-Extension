@@ -16,7 +16,14 @@
                 "contentscript.js"
             ],
             "matches": [
-                "https://www.raisin.nl/savingglobal/*"
+                "https://www.raisin.com/*",
+                "https://www.raisin.co.uk/*",
+                "https://www.raisin.es/*",
+                "https://www.raisin.fr/*",
+                "https://www.raisin.ie/*",
+                "https://www.raisin.nl/*",                
+                "https://www.weltsparen.at/*",
+                "https://www.weltsparen.de/*"
             ]
         }
     ]
