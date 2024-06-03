@@ -42,10 +42,12 @@ class RaisinAddon {
 
     private showCurrentPage(route: string) {
 
+        route = route.toLocaleLowerCase();
+
         // Run different scripts on every route.
-        if (route.indexOf("MyInvestments/Overnight") > -1) {
+        if (route.indexOf("myinvestments/overnight") > -1) {
             this.showMyInvestmentsPage();
-        } else if (route.indexOf("Dashboard") > -1) {
+        } else if (route.indexOf("dashboard") > -1) {
             this.showDashboardPage();
         }
     }
@@ -54,6 +56,11 @@ class RaisinAddon {
         // Wait for page to load.
         await waitForElement("div[class^=styles_depositCard]");
 
+        // If the script has already run, don't do it again.
+        if (document.querySelector("div[data-raisin-addon=investments")) {
+            return;
+        }
+
         // Load customer data if not already loaded.
         await this.loadInitialUserData();
 
@@ -61,6 +68,7 @@ class RaisinAddon {
         const accountDivs = document.querySelectorAll("div[class^=styles_depositCard]");
 
         if (accountDivs.length > 0) {
+
             // Get the deposits. This response contains interest data
             const authToken = JSON.parse(localStorage.getItem("auth_token")!);
             const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits?customer_id=${this.customer.bac_number}`, {
@@ -69,7 +77,7 @@ class RaisinAddon {
                     Authorization: `Bearer ${authToken.access_token}`,
                 },
             });
-            const deposits = await depositsResponse.json();
+            const deposits: RaisinDeposit[] = await depositsResponse.json();
 
             const eurNumberFormat = new Intl.NumberFormat(this.customer.locale, { style: "currency", currency: "EUR" });
 
@@ -95,6 +103,9 @@ class RaisinAddon {
                     this.addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat);
                 }
             }
+
+            // Add attribute marking this function is done.
+            accountDivs[0].parentElement?.setAttribute("data-raisin-addon", "investments");
         }
     }
 
@@ -102,6 +113,11 @@ class RaisinAddon {
     private async showDashboardPage() {
         // Wait for page to load.
         await waitForElement("div[class^=styles_interimDashboardDetailsWrapper]");
+
+        // If the script has already run, don't do it again.
+        if (document.querySelector("div[data-raisin-addon=dashboard")) {
+            return;
+        }
 
         // Load customer data if not already loaded.
         await this.loadInitialUserData();
@@ -186,6 +202,9 @@ class RaisinAddon {
 
                 currentRow.appendChild(accruedInterestRow);
             }
+            
+            // Add attribute marking this function is done.
+            dashboardDiv.setAttribute("data-raisin-addon", "dashboard");
         }
     }
 
