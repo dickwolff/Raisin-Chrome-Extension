@@ -1,6 +1,31 @@
+// Main executable.
 const raisinAddon = async function () {
-  console.log("Raisin add-on loaded");
+  // Subscribe to route changes so the scripts can run on their respective pages.
+  observeUrlChange();
 
+  console.log("Raisin add-on loaded");
+};
+
+const observeUrlChange = () => {
+  let oldHref = document.location.href;
+
+  const body = document.querySelector("body");
+
+  const observer = new MutationObserver((_) => {
+    if (oldHref !== document.location.href) {
+      oldHref = document.location.href;
+
+      // Run different scripts on every route.
+      if (oldHref.indexOf("MyInvestments/Overnight") > -1) {
+        myInvestmentsPage();
+      }
+    }
+  });
+
+  observer.observe(body, { childList: true, subtree: true });
+};
+
+async function myInvestmentsPage() {
   // Wait for page to load.
   await waitForElement("div[class^=styles_depositCard]");
 
@@ -56,7 +81,7 @@ const raisinAddon = async function () {
       }
     }
   }
-};
+}
 
 function addCustomName(accountDiv, depositMatch, syncedData) {
   let labelValue = undefined;
