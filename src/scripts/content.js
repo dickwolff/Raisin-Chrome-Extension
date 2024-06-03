@@ -1,7 +1,28 @@
+let customer;
+
 // Main executable.
 const raisinAddon = async function () {
+  // Get customer data. This contains the account id.
+  const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
+    method: "GET",
+    mode: "no-cors",
+  });
+  customer = await customerResponse.json();
+
+  // Check the user's locale. Set it to the default locale if it is also supported by the add-on.
+  const customerLocale = `${customer.locale}`.toLocaleLowerCase();
+  if (Object.hasOwn(window.raisinAddon.i18n, customerLocale)) {
+    window.raisinAddon.i18n = window.raisinAddon.i18n[customerLocale];
+  } else {
+    // Otherwise default to English.
+    window.raisinAddon.i18n = window.raisinAddon.i18n["en"];
+  }
+
   // Subscribe to route changes so the scripts can run on their respective pages.
   observeUrlChange();
+
+  // Show current page.
+  showCurrentPage(window.location.href);
 
   console.log("Raisin add-on loaded");
 };
@@ -14,16 +35,21 @@ const observeUrlChange = () => {
   const observer = new MutationObserver((_) => {
     if (oldHref !== document.location.href) {
       oldHref = document.location.href;
-
-      // Run different scripts on every route.
-      if (oldHref.indexOf("MyInvestments/Overnight") > -1) {
-        myInvestmentsPage();
-      }
+      showCurrentPage(oldHref);
     }
   });
 
   observer.observe(body, { childList: true, subtree: true });
 };
+
+function showCurrentPage(route) {
+  // Run different scripts on every route.
+  if (route.indexOf("MyInvestments/Overnight") > -1) {
+    myInvestmentsPage();
+  } else if (route.indexOf("Dashboard") > -1) {
+    dashboardPage();
+  }
+}
 
 async function myInvestmentsPage() {
   // Wait for page to load.
@@ -33,22 +59,6 @@ async function myInvestmentsPage() {
   const accountDivs = document.querySelectorAll("div[class^=styles_depositCard]");
 
   if (accountDivs.length > 0) {
-    // Get customer data. This contains the account id.
-    const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
-      method: "GET",
-      mode: "no-cors",
-    });
-    const customer = await customerResponse.json();
-
-    // Check the user's locale. Set it to the default locale if it is also supported by the add-on.
-    const customerLocale = `${customer.locale}`.toLocaleLowerCase();
-    if (Object.hasOwn(window.raisinAddon.i18n, customerLocale)) {
-      window.raisinAddon.i18n = window.raisinAddon.i18n[customerLocale];
-    } else {
-      // Otherwise default to English.
-      window.raisinAddon.i18n = window.raisinAddon.i18n["en"];
-    }
-
     // Get the deposits. This response contains interest data
     const authToken = JSON.parse(localStorage.getItem("auth_token"));
     const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits?customer_id=${customer.bac_number}`, {
@@ -79,6 +89,93 @@ async function myInvestmentsPage() {
         // Add interest to table.
         addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat);
       }
+    }
+  }
+}
+
+async function dashboardPage() {
+  // Wait for page to load.
+  await waitForElement("div[class^=styles_interimDashboardDetailsWrapper]");
+
+  // Check if you are on the account page.
+  const dashboardDiv = document.querySelector("div[class^=styles_interimDashboardDetailsWrapper]");
+
+  if (dashboardDiv) {
+    // Get the deposits. This response contains interest data
+    const authToken = JSON.parse(localStorage.getItem("auth_token"));
+    const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits?customer_id=${customer.bac_number}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken.access_token}`,
+      },
+    });
+    const deposits = await depositsResponse.json();
+
+    let savingsAccountsTotal = {
+      accrued: 0,
+      total: 0,
+    };
+    let depositsAccountsTotal = {
+      accrued: 0,
+      total: 0,
+    };
+
+    const hasNoSavingsAccounts = deposits.find((a) => a.term.period == "UNDEFINED") === undefined;
+    const hasNoDepositAccounts = deposits.find((a) => a.term.period != "UNDEFINED") === undefined;
+
+    for (let idx = 0; idx < deposits.length; idx++) {
+      let deposit = deposits[idx];
+
+      // Savings don't have a period.
+      if (deposit.term.period == "UNDEFINED") {
+        savingsAccountsTotal.accrued += parseFloat(deposit.total_accrued_interest_amount.denomination);
+        savingsAccountsTotal.total += parseFloat(deposit.total_booked_interest_amount.denomination);
+      } else {
+        depositsAccountsTotal.accrued += deposit.total_accrued_interest_amount.denomination;
+        depositsAccountsTotal.total += deposit.total_booked_interest_amount.denomination;
+      }
+    }
+
+    const eurNumberFormat = new Intl.NumberFormat(customer.locale, { style: "currency", currency: "EUR", currencyDisplay: "code" });
+
+    const dashboardRows = dashboardDiv.firstChild.lastChild.childNodes;
+
+    const detailsRow = document.querySelector("div[class^='styles_categoryDetailsRow_']");
+    const detailsRowClassName = detailsRow.className;
+    const stylesParagraphClassName = detailsRow.firstChild.className;
+
+    for (let idx = 0; idx < dashboardRows.length; idx++) {
+      const currentRow = dashboardRows[idx];
+
+      // If no deposits accounts, don't add the interest.
+      if (idx === 0 && hasNoDepositAccounts) {
+        continue;
+      }
+
+      // If no savings accounts, don't add the interest.
+      if (idx === 1 && hasNoSavingsAccounts) {
+        continue;
+      }
+
+      // First row is for deposits, second for savings. Take the corresponding data object.
+      const data = idx === 0 ? depositsAccountsTotal : savingsAccountsTotal;
+
+      const accruedInterestParagraphLabel = createElement("p", window.raisinAddon.i18n.interestAccruedThisQuarter, null, stylesParagraphClassName);
+      const totalInterestPaidParagraphLabel = createElement("p", window.raisinAddon.i18n.totalInterestPaidOut, null, stylesParagraphClassName);
+
+      const accruedInterestParagraphValue = createElement("p", eurNumberFormat.format(data.accrued), null, stylesParagraphClassName);
+      const totalInterestPaidParagraphValue = createElement("p", eurNumberFormat.format(data.total), null, stylesParagraphClassName);
+
+      const accruedInterestRow = createElement(
+        "div",
+        null,
+        null,
+        detailsRowClassName,
+        "display: grid; grid-auto-flow: column; grid-template-columns: 14rem 8rem; grid-template-rows: 3rem 3rem; font-size: 1.25rem; border-top: none;",
+        [accruedInterestParagraphLabel, totalInterestPaidParagraphLabel, accruedInterestParagraphValue, totalInterestPaidParagraphValue]
+      );
+
+      currentRow.appendChild(accruedInterestRow);
     }
   }
 }
