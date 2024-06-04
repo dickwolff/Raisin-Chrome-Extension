@@ -1,6 +1,6 @@
 {
     "name": "raisin-addon",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Add-on to enrich your Raisin experience.",
     "main": "index.js",
     "scripts": {
