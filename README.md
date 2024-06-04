@@ -24,11 +24,14 @@ The easiest way to use the extension is to head to the [Chrome Web Store](https:
 ### Run locally
 
 1. Clone/download this repository.
-2. Head to your browser and type `chrome://extensions` in the address bar.
-3. Click on the button that says `Load unpacked`.
-4. Navigate to the folder where you stored the repo (step 1)
-5. Select the `src` folder (don't go in it!)
-6. The extension is loaded!
+2. Open the cloned/downloaded repository in VSCode.
+3. Open the terminal inside VSCode and run `npm run build`. This compiles the extension code to plain JavaScript and puts it in the `/dist` folder.
+4. Head to your browser and type `chrome://extensions` in the address bar.
+5. Ensure you have enabled Developer Mode (the toggle is on the top-right of the browser).
+6. Click on the button that says `Load unpacked`.
+7. Navigate to the folder where you stored the repo (step 1).
+8. Select the `/dist` folder (don't go in it!).
+9. The extension is loaded!
 
 ![Locally run extension](img/local.png)
 
