@@ -4,6 +4,7 @@ const i18n: any = {
         giveNameLabel: "Geef een naam op voor de rekening",
         giveNameLabelLengthError: "Naam moet meer dan 3 tekens zijn!",
         interestAccruedThisQuarter: "Opgebouwd dit kwartaal",
+        noSourceTaxLabel: "Geen bronbelasting",
         totalInterestPaidOut: "Totaal uitbetaalde rente",
     },
     de: {
@@ -11,6 +12,7 @@ const i18n: any = {
         giveNameLabel: "Geben Sie einen Namen für das Konto ein",
         giveNameLabelLengthError: "Name sollte mindestens 3 Zeichen sein!",
         interestAccruedThisQuarter: "Diesem Viertel gebaut",
+        noSourceTaxLabel: "Keine Quellensteuer",
         totalInterestPaidOut: "Gesamtzinsen bezahlt",
     },
     en: {
@@ -18,6 +20,7 @@ const i18n: any = {
         giveNameLabel: "Enter a name for the account",
         giveNameLabelLengthError: "Name should be at least 3 characters!",
         interestAccruedThisQuarter: "Accrued this quarter",
+        noSourceTaxLabel: "No source tax",
         totalInterestPaidOut: "Total interest paid",
     },
     fr: {
@@ -25,6 +28,7 @@ const i18n: any = {
         giveNameLabel: "Entrez un nom pour le compte",
         giveNameLabelLengthError: "Le nom doit comporter au moins 3 caractères!",
         interestAccruedThisQuarter: "Construit ce trimestre",
+        noSourceTaxLabel: "Pas de retenue à la source",
         totalInterestPaidOut: "Intérêt total payé",
     },
     es: {
@@ -32,6 +36,7 @@ const i18n: any = {
         giveNameLabel: "Ingrese un nombre para la cuenta",
         giveNameLabelLengthError: "¡El nombre debe ser al menos 3 caracteres!",
         interestAccruedThisQuarter: "Acumulado este trimestre",
+        noSourceTaxLabel: "Sin retención de impuestos",
         totalInterestPaidOut: "Intereses totales pagados",
     },
 }

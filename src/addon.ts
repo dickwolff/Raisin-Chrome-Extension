@@ -49,6 +49,8 @@ class RaisinAddon {
             this.showMyInvestmentsPage();
         } else if (route.indexOf("dashboard") > -1) {
             this.showDashboardPage();
+        } else if (route.indexOf("products") > -1) {
+            this.showProductsPage();
         }
     }
 
@@ -202,10 +204,67 @@ class RaisinAddon {
 
                 currentRow.appendChild(accruedInterestRow);
             }
-            
+
             // Add attribute marking this function is done.
             dashboardDiv.setAttribute("data-raisin-addon", "dashboard");
         }
+    }
+
+    private async showProductsPage() {
+        // Wait for page to load.
+        await waitForElement("div[class^=styles_productsWrapper]");
+
+        // If the script has already run, don't do it again.
+        if (document.querySelector("div[data-raisin-addon=products")) {
+            return;
+        }
+
+        // Load customer data if not already loaded.
+        await this.loadInitialUserData();
+
+        const filtersDiv = document.querySelector("div[class^=styles_filterRow]");
+
+        const inputClassName = document.querySelector("input[class^=styles_checkboxElement]")?.className;
+        const noSourceTaxInput = createElement(
+            "input",
+            undefined,
+            "nosourcetax",
+            inputClassName);
+        noSourceTaxInput.setAttribute("name", "nosourcetax");
+        noSourceTaxInput.setAttribute("type", "checkbox");
+
+        const inputLabelClassName = document.querySelector("span[class*=styles_checkboxLarge]")?.className;
+        const noSourceTaxInputLabel = createElement(
+            "span",
+            undefined,
+            undefined,
+            inputLabelClassName);
+
+        const labelSpan = createElement("span", this.i18n.noSourceTaxLabel);
+
+        const labelClassName = document.querySelector("label[class*=styles_labelCheckbox]")?.className;
+        const label = createElement("label", undefined, undefined, labelClassName, undefined, [noSourceTaxInput, noSourceTaxInputLabel, labelSpan]);
+        label.setAttribute("for", "nosourcetax");
+        label.onclick = () => {
+            this.setSourceTaxAttribute();
+        }
+
+        const inputSpan = createElement("span", undefined, undefined, undefined, undefined, [label]);
+
+        const inputDivClassName = document.querySelector("div[class^=styles_filterTerm]")?.className;
+        const inputDiv = createElement("div", undefined, undefined, inputDivClassName, undefined, [inputSpan]);
+        filtersDiv?.appendChild(inputDiv);
+
+        this.setSourceTaxAttribute();
+
+        // Add click handler to load more button. This will set the attibutes.
+        const loadMoreButtonDiv = document.querySelector("div[class^=styles_loadMore]");
+        (loadMoreButtonDiv?.firstElementChild as HTMLInputElement).onclick = () => {
+            this.setSourceTaxAttribute();
+        }
+
+        // Add attribute marking this function is done.
+        filtersDiv?.setAttribute("data-raisin-addon", "products");
     }
 
     private addCustomName(accountDiv: Element, depositMatch: RaisinDeposit, syncedData: SyncedData) {
@@ -296,7 +355,7 @@ class RaisinAddon {
             interestDiv,
         ]);
 
-        accountDiv.insertBefore(lineDiv, accountDiv.children[accountDiv.children.length - 1]);
+        accountDiv.insertBefore(lineDiv, accountDiv.children[1]);
         accountDiv.children[0].setAttribute("style", "padding-bottom: 0px;");
     }
 
@@ -347,6 +406,35 @@ class RaisinAddon {
                 }
             }, 250);
         };
+    }
+
+    private setSourceTaxAttribute() {
+        setTimeout(() => {
+            const offersDivs = document.querySelectorAll("div[id^=offer]");
+
+            // Set the attributes containing the source tax info.
+            for (let idx = 0; idx < offersDivs.length; idx++) {
+                const offer = offersDivs[idx];
+
+                const hasNoSourceTax = offer.querySelector("span[class*=chipNoTax]");
+
+                offer.setAttribute("data-sourcetax", `${!hasNoSourceTax}`);
+            }
+
+            // Hide/show offers depending on which need to be shown.
+            const nosourcetaxChecked = (document.querySelector("#nosourcetax") as HTMLInputElement).checked;
+            for (let idx = 0; idx < offersDivs.length; idx++) {
+                const offer = offersDivs[idx];
+                const offerHasSourceTax = offer.getAttribute("data-sourcetax");
+
+                // If source tax should be hidden, and the current offer has source tax, hide it.
+                if (nosourcetaxChecked && offerHasSourceTax === "true") {
+                    offer.setAttribute("style", "display: none");
+                } else {
+                    offer.removeAttribute("style");
+                }
+            }
+        }, 100);
     }
 }
 
