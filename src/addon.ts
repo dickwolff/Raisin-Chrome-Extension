@@ -45,7 +45,7 @@ class RaisinAddon {
         route = route.toLocaleLowerCase();
 
         // Run different scripts on every route.
-        if (route.indexOf("myinvestments/overnight") > -1) {
+        if (route.indexOf("myinvestments") > -1) {
             this.showMyInvestmentsPage();
         } else if (route.indexOf("dashboard") > -1) {
             this.showDashboardPage();
