@@ -6,6 +6,10 @@ const i18n: any = {
         interestAccruedThisQuarter: "Opgebouwd dit kwartaal",
         noSourceTaxLabel: "Geen bronbelasting",
         totalInterestPaidOut: "Totaal uitbetaalde rente",
+        chartLabelTopup: "Storting",
+        chartLabelWithdrawal: "Opname",
+        chartLabelInterest: "Rentebijschrijving",
+        chartLabelPayIn: "Openingsbedrag"
     },
     de: {
         giveNameChip: "Geben Sie einen Namen ein",
@@ -14,6 +18,10 @@ const i18n: any = {
         interestAccruedThisQuarter: "Diesem Viertel gebaut",
         noSourceTaxLabel: "Keine Quellensteuer",
         totalInterestPaidOut: "Gesamtzinsen bezahlt",
+        chartLabelTopup: "Kaution",
+        chartLabelWithdrawal: "Aufnahme",
+        chartLabelInterest: "Zinsgutschrift",
+        chartLabelPayIn: "Eröffnungsbetrag"
     },
     en: {
         giveNameChip: "Enter a name",
@@ -22,6 +30,10 @@ const i18n: any = {
         interestAccruedThisQuarter: "Accrued this quarter",
         noSourceTaxLabel: "No source tax",
         totalInterestPaidOut: "Total interest paid",
+        chartLabelTopup: "Topup",
+        chartLabelWithdrawal: "Withdrawal",
+        chartLabelInterest: "Interest booking",
+        chartLabelPayIn: "Pay in"
     },
     fr: {
         giveNameChip: "Entrez un nom",
@@ -30,6 +42,10 @@ const i18n: any = {
         interestAccruedThisQuarter: "Construit ce trimestre",
         noSourceTaxLabel: "Pas de retenue à la source",
         totalInterestPaidOut: "Intérêt total payé",
+        chartLabelTopup: "Dépôt",
+        chartLabelWithdrawal: "Enregistrement",
+        chartLabelInterest: "Crédit d'intérêt",
+        chartLabelPayIn: "Montant d'ouverture"
     },
     es: {
         giveNameChip: "Ingrese un nombre",
@@ -38,6 +54,10 @@ const i18n: any = {
         interestAccruedThisQuarter: "Acumulado este trimestre",
         noSourceTaxLabel: "Sin retención de impuestos",
         totalInterestPaidOut: "Intereses totales pagados",
+        chartLabelTopup: "Depósito",
+        chartLabelWithdrawal: "Grabación",
+        chartLabelInterest: "Crédito de intereses",
+        chartLabelPayIn: "Monto de apertura"
     },
 }
 

@@ -56,7 +56,7 @@ const showMyInvestmentsPage = async (customer: any, i18n: any) => {
                 addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat);
 
                 // Add transaction history graph.
-                addTransactionHistoryGraph(accountDiv, accountDiv.id);
+                addTransactionHistoryGraph(accountDiv, accountDiv.id, eurNumberFormat);
             }
         }
 
@@ -206,7 +206,7 @@ const addInterestToDetailsTable = (accountDiv: Element, depositMatch: RaisinDepo
     };
 }
 
-const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string) => {
+const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string, eurNumberFormat: Intl.NumberFormat) => {
 
 
     const toggleButtonsDiv = accountDiv.querySelector("div[class*=styles_toggleButtons]");
@@ -231,7 +231,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
             graphElement.parentElement?.removeChild(graphElement);
             return;
         }
-        
+
         // Update de view.
         updateView(accountDiv, accountId);
 
@@ -286,18 +286,67 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
         const lineSeries = transactionHistoryChart.addLineSeries();
 
         let prevValue = 0;
-        const lineSeriesData: { time: Time, value: number }[] = [];
+        const lineSeriesData: { time: Time, value: number, action: string }[] = [];
         for (let idx = 0; idx < transactions.length; idx++) {
             const transaction = transactions[idx];
             prevValue += parseFloat(transaction.amount.denomination);
 
             lineSeriesData.push({
                 time: new Date(transaction.value_date).toISOString().split("T")[0],
-                value: prevValue
+                value: prevValue,
+                action: transaction.type
             });
         }
         lineSeries.setData(lineSeriesData);
+        console.log(lineSeriesData)
         transactionHistoryChart.timeScale().fitContent();
+
+
+        // Create and style the tooltip html element
+        const toolTip = document.createElement('div');
+        toolTip.setAttribute("style", "width: 128px; height: 96px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: white; color: black; border-color: #2962FF;");
+        graphViewDiv.appendChild(toolTip);
+
+        transactionHistoryChart.subscribeCrosshairMove((param: any) => {
+            if (
+                param.point === undefined ||
+                !param.time ||
+                param.point.x < 0 ||
+                param.point.y < 0
+            ) {
+                toolTip.style.display = 'none';
+            } else {
+                toolTip.style.display = 'block';
+                const data = param.seriesData.get(lineSeries);
+                const dataMatch = lineSeriesData.find(t => t.time === data.time && t.value === data.value);
+
+                let label = "";
+                switch (dataMatch?.action) {
+                    case "PAY IN":
+                        label = _i18n.chartLabelPayIn;
+                        break;
+                    case "TOPUP":
+                        label = _i18n.chartLabelTopup;
+                        break;
+                    case "WITHDRAWAL":
+                        label = _i18n.chartLabelWithdrawal;
+                        break;
+                    case "INTEREST BOOKING":
+                        label = _i18n.chartLabelInterest;
+                        break;
+                }
+
+                toolTip.innerHTML =
+                    `<div style="color: ${'#2962FF'}">${label}</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
+                    ${eurNumberFormat.format(dataMatch?.value!)}
+                    </div><div style="color: ${'black'}">
+                    ${dataMatch?.time}
+                    </div>`;
+                // Position tooltip according to mouse cursor position
+                toolTip.style.left = param.point.x + 'px';
+                toolTip.style.top = param.point.y + 'px';
+            }
+        })
     }
 
     // Add event handlers on the other buttons.
@@ -323,7 +372,6 @@ const updateView = (accountDiv: Element, accountId: string) => {
 
     // Remove active border on button.
     const activeButton = document.querySelector(`span[class*=styles_toggleButtonExpanded]`);
-    console.log(activeButton)
     if (activeButton) {
         const normalButtonClassName = document.querySelector(`span[class*=styles_toggleButton_]`)?.className!;
         activeButton.setAttribute("class", normalButtonClassName);
