@@ -223,7 +223,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
     const toggleButtonsDiv = accountDiv.querySelector("div[class*=styles_toggleButtons]");
     const toggleButtonsClassName = toggleButtonsDiv?.querySelector("span[class*=styles_toggleButton_]")?.className;
 
-    const graphButtonTextSpan = createElement("span", "Grafiek");
+    const graphButtonTextSpan = createElement("span", _i18n.chartLabel);
     const graphButton = createElement(
         "span",
         undefined,
@@ -286,7 +286,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                 }
             }
         });
-        const lineSeries = transactionHistoryChart.addLineSeries();
+        const lineSeries = transactionHistoryChart.addLineSeries({ color: "#156cc4"});
 
         let prevValue = 0;
         const lineSeriesData: { time: Time, value: number, action: string }[] = [];
@@ -305,7 +305,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
 
         // Create and style the tooltip html element
         const toolTip = document.createElement('div');
-        toolTip.setAttribute("style", "width: 128px; height: 96px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: white; color: black; border-color: #2962FF;");
+        toolTip.setAttribute("style", "width: 128px; height: 96px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: white; color: black; border-color: #156cc4;");
         graphViewDiv.appendChild(toolTip);
 
         transactionHistoryChart.subscribeCrosshairMove((param: any) => {
@@ -335,7 +335,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                 }
 
                 toolTip.innerHTML =
-                    `<div style="color: ${'#2962FF'}">${label}</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
+                    `<div style="color: ${'#156cc4'}">${label}</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
                     ${eurNumberFormat.format(dataMatch?.value!)}
                     </div><div style="color: ${'black'}">
                     ${dataMatch?.time}
