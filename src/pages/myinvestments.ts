@@ -208,7 +208,18 @@ const addInterestToDetailsTable = (accountDiv: Element, depositMatch: RaisinDepo
 
 const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string, eurNumberFormat: Intl.NumberFormat) => {
 
+    // Retrieve the transaction data.
+    const authToken = JSON.parse(localStorage.getItem("auth_token")!);
+    const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits/${accountId}/transactions`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${authToken.access_token}`,
+        },
+    });
+    let transactions: RaisinTransaction[] = await depositsResponse.json();
+    transactions = transactions.sort((a, b) => new Date(a.value_date).getTime() - new Date(b.value_date).getTime());
 
+    // Add the graph button to the list of toggles.
     const toggleButtonsDiv = accountDiv.querySelector("div[class*=styles_toggleButtons]");
     const toggleButtonsClassName = toggleButtonsDiv?.querySelector("span[class*=styles_toggleButton_]")?.className;
 
@@ -223,6 +234,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
     graphButton.setAttribute("role", "button");
     toggleButtonsDiv?.firstElementChild?.appendChild(graphButton);
 
+    // Add click handler on the graph button.
     graphButton.onclick = async () => {
 
         // Check if the graph was already shown, hide if true.
@@ -259,16 +271,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
             "padding: 10px 25px;");
         accountDiv.appendChild(graphViewDiv);
 
-        const authToken = JSON.parse(localStorage.getItem("auth_token")!);
-        const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits/${accountId}/transactions`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${authToken.access_token}`,
-            },
-        });
-        let transactions: RaisinTransaction[] = await depositsResponse.json();
-        transactions = transactions.sort((a, b) => new Date(a.value_date).getTime() - new Date(b.value_date).getTime());
-
+        // Add the transaction chart.
         const transactionHistoryChart = createChart(graphViewDiv, {
             height: 300,
             autoSize: true,
@@ -298,9 +301,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
             });
         }
         lineSeries.setData(lineSeriesData);
-        console.log(lineSeriesData)
         transactionHistoryChart.timeScale().fitContent();
-
 
         // Create and style the tooltip html element
         const toolTip = document.createElement('div');
@@ -308,15 +309,12 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
         graphViewDiv.appendChild(toolTip);
 
         transactionHistoryChart.subscribeCrosshairMove((param: any) => {
-            if (
-                param.point === undefined ||
-                !param.time ||
-                param.point.x < 0 ||
-                param.point.y < 0
-            ) {
+            if (param.point === undefined || !param.time || param.point.x < 0 || param.point.y < 0) {
                 toolTip.style.display = 'none';
             } else {
                 toolTip.style.display = 'block';
+
+                // Look for a match in the data, so the action can be retrieved.
                 const data = param.seriesData.get(lineSeries);
                 const dataMatch = lineSeriesData.find(t => t.time === data.time && t.value === data.value);
 
@@ -342,6 +340,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                     </div><div style="color: ${'black'}">
                     ${dataMatch?.time}
                     </div>`;
+
                 // Position tooltip according to mouse cursor position
                 toolTip.style.left = param.point.x + 'px';
                 toolTip.style.top = param.point.y + 'px';
@@ -378,7 +377,6 @@ const updateView = (accountDiv: Element, accountId: string) => {
         activeButton.removeAttribute("style");
     }
 }
-
 
 export {
     showMyInvestmentsPage
