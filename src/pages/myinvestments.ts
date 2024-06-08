@@ -1,3 +1,5 @@
+import { Time, createChart } from "lightweight-charts";
+
 import { createElement, hashCode, syncStorage, waitForElement } from "../helpers";
 
 let _i18n: any;
@@ -52,6 +54,9 @@ const showMyInvestmentsPage = async (customer: any, i18n: any) => {
 
                 // Add interest to table.
                 addInterestToDetailsTable(accountDiv, depositMatch, eurNumberFormat);
+
+                // Add transaction history graph.
+                addTransactionHistoryGraph(accountDiv, accountDiv.id);
             }
         }
 
@@ -200,6 +205,132 @@ const addInterestToDetailsTable = (accountDiv: Element, depositMatch: RaisinDepo
         }, 250);
     };
 }
+
+const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string) => {
+
+
+    const toggleButtonsDiv = accountDiv.querySelector("div[class*=styles_toggleButtons]");
+    const toggleButtonsClassName = toggleButtonsDiv?.querySelector("span[class*=styles_toggleButton_]")?.className;
+
+    const graphButtonTextSpan = createElement("span", "Grafiek");
+    const graphButton = createElement(
+        "span",
+        undefined,
+        `${accountId}-graph`,
+        toggleButtonsClassName,
+        undefined,
+        [graphButtonTextSpan]);
+    graphButton.setAttribute("role", "button");
+    toggleButtonsDiv?.firstElementChild?.appendChild(graphButton);
+
+    graphButton.onclick = async () => {
+
+        // Check if the graph was already shown, hide if true.
+        const graphElement = accountDiv.querySelector(`div[id=${accountId}-graphview`);
+        if (graphElement) {
+            graphElement.parentElement?.removeChild(graphElement);
+            return;
+        }
+        
+        // Update de view.
+        updateView(accountDiv, accountId);
+
+        // Make button active.
+        graphButton.setAttribute("style", "border-bottom: 2px solid;");
+        graphButton.setAttribute("class", `${toggleButtonsClassName} styles_toggleButtonExpanded`);
+
+        // Check if the tranactions element was shown, hide if true.
+        const detailsElement = accountDiv.querySelector("div[class^='styles_detailsInfo'");
+        if (detailsElement) {
+            detailsElement.setAttribute("style", "display: none");
+        }
+
+        // Check if the tranactions element was shown, hide if true.
+        const transactionsElement = accountDiv.querySelector("div[class^='styles_ordersTable'");
+        if (transactionsElement) {
+            transactionsElement.setAttribute("style", "display: none");
+        }
+
+        const graphViewDiv = createElement(
+            "div",
+            undefined,
+            `${accountId}-graphview`,
+            undefined,
+            "padding: 10px 25px;");
+        accountDiv.appendChild(graphViewDiv);
+
+        const authToken = JSON.parse(localStorage.getItem("auth_token")!);
+        const depositsResponse = await fetch(`https://api2.weltsparen.de/das/v1/deposits/${accountId}/transactions`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${authToken.access_token}`,
+            },
+        });
+        let transactions: RaisinTransaction[] = await depositsResponse.json();
+        transactions = transactions.sort((a, b) => new Date(a.value_date).getTime() - new Date(b.value_date).getTime());
+
+        const transactionHistoryChart = createChart(graphViewDiv, {
+            height: 300,
+            autoSize: true,
+            crosshair: {
+                horzLine: {
+                    visible: true,
+                    labelVisible: true
+                },
+                vertLine: {
+                    visible: true,
+                    labelVisible: true
+                }
+            }
+        });
+        const lineSeries = transactionHistoryChart.addLineSeries();
+
+        let prevValue = 0;
+        const lineSeriesData: { time: Time, value: number }[] = [];
+        for (let idx = 0; idx < transactions.length; idx++) {
+            const transaction = transactions[idx];
+            prevValue += parseFloat(transaction.amount.denomination);
+
+            lineSeriesData.push({
+                time: new Date(transaction.value_date).toISOString().split("T")[0],
+                value: prevValue
+            });
+        }
+        lineSeries.setData(lineSeriesData);
+        transactionHistoryChart.timeScale().fitContent();
+    }
+
+    // Add event handlers on the other buttons.
+
+    const detailsButton = accountDiv.querySelector(`span[id*=${accountId}-details]`);
+    (detailsButton as HTMLInputElement).onclick = () => {
+        updateView(accountDiv, accountId);
+    }
+
+    const transactionsButton = accountDiv.querySelector(`span[id*=${accountId}-transactions]`);
+    (transactionsButton as HTMLInputElement).onclick = () => {
+        updateView(accountDiv, accountId);
+    }
+}
+
+const updateView = (accountDiv: Element, accountId: string) => {
+
+    // Check if the graph was already shown, hide if true.
+    const graphElement = accountDiv.querySelector(`div[id=${accountId}-graphview`);
+    if (graphElement) {
+        graphElement.parentElement?.removeChild(graphElement);
+    }
+
+    // Remove active border on button.
+    const activeButton = document.querySelector(`span[class*=styles_toggleButtonExpanded]`);
+    console.log(activeButton)
+    if (activeButton) {
+        const normalButtonClassName = document.querySelector(`span[class*=styles_toggleButton_]`)?.className!;
+        activeButton.setAttribute("class", normalButtonClassName);
+        activeButton.removeAttribute("style");
+    }
+}
+
 
 export {
     showMyInvestmentsPage

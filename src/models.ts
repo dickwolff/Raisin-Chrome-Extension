@@ -19,3 +19,12 @@ interface RaisinDeposit {
     },
     deposit_id: string;
 }
+
+interface RaisinTransaction {
+    value_date: Date;
+    amount: {
+        currency: string;
+        denomination: string;
+    }
+    type: string;
+}
