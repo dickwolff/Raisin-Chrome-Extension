@@ -13,7 +13,7 @@ _This extension is not affiliated with Raisin. However, if you don't have a Rais
 
 Raisin returns your accrued interest in their response body. They do however not show it. This extension does! You can also add a name to your saving accounts. The extension utlilizes [`chrome.storage.sync`](https://developer.chrome.com/docs/extensions/reference/api/storage?hl=nl#property-sync) to sync the names to your other devices.
 
-The extension runs only on specific pages. It retrieves data from the Raisin API. It re-uses your current authorization context once to retrieve your account data, for locale and Account ID. The Account ID is needed to retrieve your savings/deposits account data. This result contains your interest data. This is done for each relevant page, so you always have the most up to date info. The interest data is then shown on the page.
+The extension runs only on specific pages. It retrieves data from the Raisin API. It re-uses your current authorization context once to retrieve your account data, for locale and Account ID. The Account ID is needed to retrieve your savings/deposits account and transaction data. This result contains your interest data. This is done for each relevant page, so you always have the most up to date info. The interest data is then shown on the page. The transactions are shown in a graph.
 
 ## How to use
 
