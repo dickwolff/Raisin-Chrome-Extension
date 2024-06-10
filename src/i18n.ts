@@ -10,7 +10,8 @@ const i18n: any = {
         chartLabelTopup: "Storting",
         chartLabelWithdrawal: "Opname",
         chartLabelInterest: "Rentebijschrijving",
-        chartLabelPayIn: "Openingsbedrag"
+        chartLabelPayIn: "Openingsbedrag",
+        chartLabelToday: "Vandaag"
     },
     de: {
         giveNameChip: "Geben Sie einen Namen ein",
@@ -23,7 +24,8 @@ const i18n: any = {
         chartLabelTopup: "Kaution",
         chartLabelWithdrawal: "Aufnahme",
         chartLabelInterest: "Zinsgutschrift",
-        chartLabelPayIn: "Eröffnungsbetrag"
+        chartLabelPayIn: "Eröffnungsbetrag",
+        chartLabelToday: "Heute"
     },
     en: {
         giveNameChip: "Enter a name",
@@ -36,7 +38,8 @@ const i18n: any = {
         chartLabelTopup: "Topup",
         chartLabelWithdrawal: "Withdrawal",
         chartLabelInterest: "Interest booking",
-        chartLabelPayIn: "Pay in"
+        chartLabelPayIn: "Pay in",
+        chartLabelToday: "Today"
     },
     fr: {
         giveNameChip: "Entrez un nom",
@@ -49,7 +52,8 @@ const i18n: any = {
         chartLabelTopup: "Dépôt",
         chartLabelWithdrawal: "Enregistrement",
         chartLabelInterest: "Crédit d'intérêt",
-        chartLabelPayIn: "Montant d'ouverture"
+        chartLabelPayIn: "Montant d'ouverture",
+        chartLabelToday: "Aujourd'hui"
     },
     es: {
         giveNameChip: "Ingrese un nombre",
@@ -62,7 +66,8 @@ const i18n: any = {
         chartLabelTopup: "Depósito",
         chartLabelWithdrawal: "Grabación",
         chartLabelInterest: "Crédito de intereses",
-        chartLabelPayIn: "Monto de apertura"
+        chartLabelPayIn: "Monto de apertura",
+        chartLabelToday: "Hoy"
     },
 }
 

@@ -286,7 +286,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                 }
             }
         });
-        const lineSeries = transactionHistoryChart.addLineSeries({ color: "#156cc4"});
+        const lineSeries = transactionHistoryChart.addLineSeries({ color: "#156cc4" });
 
         let prevValue = 0;
         const lineSeriesData: { time: Time, value: number, action: string }[] = [];
@@ -300,6 +300,18 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                 action: transaction.type
             });
         }
+
+        // If the last line is in the past (not today), add a data point for the current date.
+        // This way the graph shows the current value up until today.
+        const today = new Date().toISOString().split("T")[0];
+        if (lineSeriesData.length > 1 && lineSeriesData[lineSeriesData.length - 1].time < new Date().toISOString().split("T")[0]) {
+            lineSeriesData.push({
+                time: today,
+                value: prevValue,
+                action: "TODAY"
+            });
+        }
+
         lineSeries.setData(lineSeriesData);
         transactionHistoryChart.timeScale().fitContent();
 
@@ -331,6 +343,9 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                         break;
                     case "INTEREST BOOKING":
                         label = _i18n.chartLabelInterest;
+                        break;
+                    case "TODAY":
+                        label = _i18n.chartLabelToday;
                         break;
                 }
 
