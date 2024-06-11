@@ -10,6 +10,7 @@ const showProductsPage = async (i18n: any) => {
         return;
     }
 
+    await waitForElement("div[class^=styles_filterRow]");
     const filtersDiv = document.querySelector("div[class^=styles_filterRow]");
 
     const inputClassName = document.querySelector("input[class^=styles_checkboxElement]")?.className;
@@ -44,14 +45,12 @@ const showProductsPage = async (i18n: any) => {
     const inputDiv = createElement("div", undefined, undefined, inputDivClassName, undefined, [inputSpan]);
     filtersDiv?.appendChild(inputDiv);
 
-    // Assign all the attributes.
-    setSourceTaxAttribute();
 
-    // Add click handler to load more button. This will also set the attibutes on new loaded offers.
-    const loadMoreButtonDiv = document.querySelector("div[class^=styles_loadMore]");
-    (loadMoreButtonDiv?.firstElementChild as HTMLInputElement).onclick = () => {
-        setSourceTaxAttribute();
-    }
+    // Add click handler to the other filters. This will also set the attibutes on new loaded offers.
+    await extentOtherFilters();
+
+    // Assign all the attributes initally.
+    setSourceTaxAttribute();
 
     // Add attribute marking this function is done.
     filtersDiv?.setAttribute("data-raisin-addon", "products");
@@ -84,6 +83,38 @@ const setSourceTaxAttribute = () => {
             }
         }
     }, 100);
+}
+
+const extentOtherFilters = async () => {
+
+    // Add to "invest amount" input.
+    const investAmountInput = document.querySelector("input[id=investmentAmount]");
+    (investAmountInput as HTMLInputElement).oninput = () => {
+        setSourceTaxAttribute();
+    }
+
+    // Add to "term" filter (if it exists).
+    if (document.querySelector("select[id=termFilter]")) {
+        const termFilterSelect = document.querySelector("select[id=termFilter]");
+        (termFilterSelect as HTMLInputElement).onchange = () => {
+            setSourceTaxAttribute();
+        }
+    }
+
+    // Add to "flexgeld" filter (if it exists).
+    if (document.querySelector("input[id=flexgeld]")) {
+        const flexGeldCheckbox = document.querySelector("input[id=flexgeld]");
+        (flexGeldCheckbox as HTMLInputElement).onchange = () => {
+            setSourceTaxAttribute();
+        }
+    }
+
+    // Add to "load more"-button.
+    await waitForElement("div[class^=styles_loadMore]");
+    const loadMoreButtonDiv = document.querySelector("div[class^=styles_loadMore]");
+    (loadMoreButtonDiv?.firstElementChild as HTMLInputElement).onclick = () => {
+        setSourceTaxAttribute();
+    }
 }
 
 export {
