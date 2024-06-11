@@ -93,7 +93,7 @@ const addCustomName = (accountDiv: Element, depositMatch: RaisinDeposit, syncedD
     );
 
     // Add click handler.
-    chipDiv.onclick = () => {
+    chipDiv.addEventListener("click", () => {
         // Create a promt for user to enter or update the name,.
         const name = prompt(_i18n.giveNameLabel, labelValue);
 
@@ -116,7 +116,7 @@ const addCustomName = (accountDiv: Element, depositMatch: RaisinDeposit, syncedD
             "margin-left: 1rem; border-radius: 4px; height: 24px; max-width: 24rem; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; border: 1px solid #d7d7d7; " +
             (labelValue ? "background: #f5f5f5;" : "background: transparent;")
         );
-    };
+    });
 
     accountDiv.firstElementChild!.children[1].setAttribute("style", "display: flex;");
     accountDiv.firstElementChild!.children[1].appendChild(chipDiv);
@@ -156,52 +156,52 @@ const addInterestOverview = (accountDiv: Element, depositMatch: RaisinDeposit, e
 }
 
 const addInterestToDetailsTable = (accountDiv: Element, depositMatch: RaisinDeposit, eurNumberFormat: Intl.NumberFormat) => {
-    const detailDiv = document.getElementById(`${depositMatch.deposit_id}-details`);
-    detailDiv!.onclick = () => {
-        setTimeout(() => {
-            if (accountDiv.lastElementChild!.className.startsWith("styles_detailsInfo")) {
-                // Interest accrued this quarter.
-                const detailsInfoRowTitleClassName = document.querySelector("div[class^='col-sm-4 styles_detailsInfoRowTitle']")?.className;
-                const quarterlyInterestLabel = createElement(
-                    "div",
-                    _i18n.interestAccruedThisQuarter,
-                    undefined,
-                    detailsInfoRowTitleClassName);
+    const detailDiv = document.querySelector(`#${depositMatch.deposit_id}-details`) as HTMLElement;
+    detailDiv?.addEventListener("click", async () => {
 
-                const detailsInfoRowTextClassName = document.querySelector("div[class^='col-sm-8 styles_detailsInfoRowText']")?.className;
-                const quarterlyInterestValue = createElement(
-                    "div",
-                    eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination) || 0),
-                    undefined,
-                    detailsInfoRowTextClassName);
+        // Wait for table to appear.
+        await waitForElement("div[class^=styles_detailsInfo]");
 
-                const detailsInfoRowClassName = document.querySelector("div[class^='row styles_detailsInfoRow']")?.className;
-                const quarterlyInterestRow = createElement("div", undefined, undefined, detailsInfoRowClassName, undefined, [
-                    quarterlyInterestLabel,
-                    quarterlyInterestValue,
-                ]);
+        // Interest accrued this quarter.
+        const detailsInfoRowTitleClassName = document.querySelector("div[class^='col-sm-4 styles_detailsInfoRowTitle']")?.className;
+        const quarterlyInterestLabel = createElement(
+            "div",
+            _i18n.interestAccruedThisQuarter,
+            undefined,
+            detailsInfoRowTitleClassName);
 
-                // Total interest paid.
-                const totalInterestPaidLabel = createElement("div", _i18n.totalInterestPaidOut, undefined, detailsInfoRowTitleClassName);
+        const detailsInfoRowTextClassName = document.querySelector("div[class^='col-sm-8 styles_detailsInfoRowText']")?.className;
+        const quarterlyInterestValue = createElement(
+            "div",
+            eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination) || 0),
+            undefined,
+            detailsInfoRowTextClassName);
 
-                const totalInterestPaidValue = createElement(
-                    "div",
-                    eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination) || 0),
-                    undefined,
-                    detailsInfoRowTextClassName);
+        const detailsInfoRowClassName = document.querySelector("div[class^='row styles_detailsInfoRow']")?.className;
+        const quarterlyInterestRow = createElement("div", undefined, undefined, detailsInfoRowClassName, undefined, [
+            quarterlyInterestLabel,
+            quarterlyInterestValue,
+        ]);
 
-                const totalInterestPaidRow = createElement("div", undefined, undefined, detailsInfoRowClassName, undefined, [
-                    totalInterestPaidLabel,
-                    totalInterestPaidValue,
-                ]);
+        // Total interest paid.
+        const totalInterestPaidLabel = createElement("div", _i18n.totalInterestPaidOut, undefined, detailsInfoRowTitleClassName);
 
-                // Add to table.
-                const tableDiv = accountDiv.children[accountDiv.children.length - 1];
-                tableDiv.insertBefore(quarterlyInterestRow, tableDiv.children[6]);
-                tableDiv.insertBefore(totalInterestPaidRow, tableDiv.children[7]);
-            }
-        }, 250);
-    };
+        const totalInterestPaidValue = createElement(
+            "div",
+            eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination) || 0),
+            undefined,
+            detailsInfoRowTextClassName);
+
+        const totalInterestPaidRow = createElement("div", undefined, undefined, detailsInfoRowClassName, undefined, [
+            totalInterestPaidLabel,
+            totalInterestPaidValue,
+        ]);
+
+        // Add to table.
+        const tableDiv = accountDiv.children[accountDiv.children.length - 1];
+        tableDiv.insertBefore(quarterlyInterestRow, tableDiv.children[6]);
+        tableDiv.insertBefore(totalInterestPaidRow, tableDiv.children[7]);
+    });
 }
 
 const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string, eurNumberFormat: Intl.NumberFormat) => {
@@ -233,7 +233,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
     toggleButtonsDiv?.firstElementChild?.appendChild(graphButton);
 
     // Add click handler on the graph button.
-    graphButton.onclick = async () => {
+    graphButton.addEventListener("click", async () => {
 
         // Check if the graph was already shown, hide if true.
         const graphElement = accountDiv.querySelector(`div[id=${accountId}-graphview`);
@@ -359,19 +359,19 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                 toolTip.style.top = param.point.y + 'px';
             }
         })
-    }
+    });
 
     // Add event handlers on the other buttons.
 
     const detailsButton = accountDiv.querySelector(`span[id*=${accountId}-details]`);
-    (detailsButton as HTMLInputElement).onclick = () => {
+    (detailsButton as HTMLInputElement).addEventListener("click", () => {
         updateView(accountDiv, accountId);
-    }
+    });
 
     const transactionsButton = accountDiv.querySelector(`span[id*=${accountId}-transactions]`);
-    (transactionsButton as HTMLInputElement).onclick = () => {
+    (transactionsButton as HTMLInputElement).addEventListener("click", () => {
         updateView(accountDiv, accountId);
-    }
+    });
 }
 
 const updateView = (accountDiv: Element, accountId: string) => {

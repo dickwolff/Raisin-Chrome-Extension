@@ -9,6 +9,7 @@ const showDashboardPage = async (customer: any, i18n: any) => {
     if (document.querySelector("div[data-raisin-addon=dashboard")) {
         return;
     }
+
     // Check if you are on the account page.
     const dashboardDiv = document.querySelector("div[class^=styles_interimDashboardDetailsWrapper]");
 
@@ -40,11 +41,11 @@ const showDashboardPage = async (customer: any, i18n: any) => {
 
             // Savings don't have a period.
             if (deposit.term.period == "UNDEFINED") {
-                savingsAccountsTotal.accrued += (parseFloat(deposit.total_accrued_interest_amount.denomination) || 0);
-                savingsAccountsTotal.total += (parseFloat(deposit.total_booked_interest_amount.denomination) || 0);
+                savingsAccountsTotal.accrued += (parseFloat(deposit.total_accrued_interest_amount?.denomination) || 0);
+                savingsAccountsTotal.total += (parseFloat(deposit.total_booked_interest_amount?.denomination) || 0);
             } else {
-                depositsAccountsTotal.accrued += deposit.total_accrued_interest_amount.denomination;
-                depositsAccountsTotal.total += deposit.total_booked_interest_amount.denomination;
+                depositsAccountsTotal.accrued += (deposit.total_accrued_interest_amount?.denomination || 0);
+                depositsAccountsTotal.total += (deposit.total_booked_interest_amount?.denomination || 0);
             }
         }
 
