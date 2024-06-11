@@ -87,7 +87,7 @@ const showDashboardPage = async (customer: any, i18n: any) => {
                 undefined,
                 undefined,
                 detailsRowClassName,
-                "display: grid; grid-auto-flow: column; grid-template-columns: 14rem 8rem; grid-template-rows: 3rem 3rem; font-size: 1.25rem; border-top: none;",
+                "display: grid; grid-auto-flow: column; grid-template-columns: 15rem 8.25rem; grid-template-rows: 3rem 3rem; font-size: 1.25rem; border-top: none;",
                 [accruedInterestParagraphLabel, totalInterestPaidParagraphLabel, accruedInterestParagraphValue, totalInterestPaidParagraphValue]
             );
 
