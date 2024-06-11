@@ -304,7 +304,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
         // If the last line is in the past (not today), add a data point for the current date.
         // This way the graph shows the current value up until today.
         const today = new Date().toISOString().split("T")[0];
-        if (lineSeriesData.length > 1 && lineSeriesData[lineSeriesData.length - 1].time < new Date().toISOString().split("T")[0]) {
+        if (lineSeriesData.length > 0 && lineSeriesData[lineSeriesData.length - 1].time < today) {
             lineSeriesData.push({
                 time: today,
                 value: prevValue,
