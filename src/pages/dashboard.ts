@@ -39,13 +39,16 @@ const showDashboardPage = async (customer: any, i18n: any) => {
         for (let idx = 0; idx < deposits.length; idx++) {
             let deposit = deposits[idx];
 
+            let accrued = (parseFloat(deposit.total_accrued_interest_amount?.denomination) || 0);
+            let total = (parseFloat(deposit.total_booked_interest_amount?.denomination) || 0);
+
             // Savings don't have a period.
             if (deposit.term.period == "UNDEFINED") {
-                savingsAccountsTotal.accrued += (parseFloat(deposit.total_accrued_interest_amount?.denomination) || 0);
-                savingsAccountsTotal.total += (parseFloat(deposit.total_booked_interest_amount?.denomination) || 0);
+                savingsAccountsTotal.accrued += accrued;
+                savingsAccountsTotal.total += total;
             } else {
-                depositsAccountsTotal.accrued += (deposit.total_accrued_interest_amount?.denomination || 0);
-                depositsAccountsTotal.total += (deposit.total_booked_interest_amount?.denomination || 0);
+                depositsAccountsTotal.accrued += accrued;
+                depositsAccountsTotal.total += total;
             }
         }
 
