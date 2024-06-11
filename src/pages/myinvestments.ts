@@ -125,9 +125,7 @@ const addCustomName = (accountDiv: Element, depositMatch: RaisinDeposit, syncedD
 const addInterestOverview = (accountDiv: Element, depositMatch: RaisinDeposit, eurNumberFormat: Intl.NumberFormat) => {
     const quarterlyInterestSpan = createElement(
         "span",
-        `${_i18n.interestAccruedThisQuarter}: ${eurNumberFormat.format(
-            parseFloat(depositMatch.total_accrued_interest_amount.denomination)
-        )}`,
+        `${_i18n.interestAccruedThisQuarter}: ${eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination) || 0)}`,
         undefined,
         undefined,
         "margin-right: 1rem;"
@@ -135,7 +133,7 @@ const addInterestOverview = (accountDiv: Element, depositMatch: RaisinDeposit, e
 
     const totalInterestPaidSpan = createElement(
         "span",
-        `${_i18n.totalInterestPaidOut}: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination))}`
+        `${_i18n.totalInterestPaidOut}: ${eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination) || 0)}`
     );
 
     const mainInfoClassName = document.querySelector("div[class^=styles_mainInfo]")?.className;
@@ -173,7 +171,7 @@ const addInterestToDetailsTable = (accountDiv: Element, depositMatch: RaisinDepo
                 const detailsInfoRowTextClassName = document.querySelector("div[class^='col-sm-8 styles_detailsInfoRowText']")?.className;
                 const quarterlyInterestValue = createElement(
                     "div",
-                    eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination)),
+                    eurNumberFormat.format(parseFloat(depositMatch.total_accrued_interest_amount.denomination) || 0),
                     undefined,
                     detailsInfoRowTextClassName);
 
@@ -188,7 +186,7 @@ const addInterestToDetailsTable = (accountDiv: Element, depositMatch: RaisinDepo
 
                 const totalInterestPaidValue = createElement(
                     "div",
-                    eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination)),
+                    eurNumberFormat.format(parseFloat(depositMatch.total_booked_interest_amount.denomination) || 0),
                     undefined,
                     detailsInfoRowTextClassName);
 
@@ -292,7 +290,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
         const lineSeriesData: { time: Time, value: number, action: string }[] = [];
         for (let idx = 0; idx < transactions.length; idx++) {
             const transaction = transactions[idx];
-            prevValue += parseFloat(transaction.amount.denomination);
+            prevValue += (parseFloat(transaction.amount.denomination) || 0);
 
             lineSeriesData.push({
                 time: new Date(transaction.value_date).toISOString().split("T")[0],
