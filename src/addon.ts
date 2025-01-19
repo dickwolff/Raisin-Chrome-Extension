@@ -1,8 +1,8 @@
-import { observeUrlChange } from "./helpers";
 import { i18n } from "./i18n";
-import { showDashboardPage } from "./pages/dashboard";
-import { showMyInvestmentsPage } from "./pages/myinvestments";
 import { showProductsPage } from "./pages/products";
+import { showDashboardPage } from "./pages/dashboard";
+import { observeUrlChange, waitForElement } from "./helpers";
+import { showMyInvestmentsPage } from "./pages/myinvestments";
 
 class RaisinAddon {
 
@@ -29,6 +29,9 @@ class RaisinAddon {
 
         // Show current page.
         this.showCurrentPage(window.location.href);
+
+        // We're done, add-on loaded.
+        console.log("Raisin add-on loaded!");
     }
 
     private async showCurrentPage(route: string) {
@@ -52,22 +55,38 @@ class RaisinAddon {
             return;
         }
 
-        // Set the customer data.
+        // Set the customer account number.
         this.customer = {
             bac_number: accountNumber,
         }
 
-        // Otherwise default to English.
-        this.i18n = i18n["en"];
+        // Try to determine what language the user is has.
+        // As this is no longer exposed via an API interface, we have to determine it from the UI.
+        // For this, the available balance is used, as it is displayed in the user's language.
+        // This is then used to determine the language of the user.
+        // This is a bit of a hack, but it works (for now).
 
-        // // Check the user's locale. Set it to the default locale if it is also supported by the add-on.
-        // const customerLocale = `${this.customer.locale}`.toLocaleLowerCase();
-        // if (Object.hasOwn(i18n, customerLocale)) {
-        //     this.i18n = i18n[customerLocale];
-        // } else {
-        //     // Otherwise default to English.
-        //     this.i18n = i18n["en"];
-        // }
+        await waitForElement("div[class^=BalanceContainer]");
+        const balanceContainer = document.querySelector("div[class^=BalanceContainer]");
+        const availableBalanceSpan = `${balanceContainer?.childNodes[1].childNodes[0].textContent?.toLocaleLowerCase()}`;
+
+        if (availableBalanceSpan.indexOf("verfügbar") > -1) {
+            this.i18n = i18n["de"];
+        }
+        else if (availableBalanceSpan.indexOf("available") > -1) {
+            this.i18n = i18n["en"];
+        }
+        else if (availableBalanceSpan.indexOf("disponibile") > -1) {
+            this.i18n = i18n["es"];
+        }
+        else if (availableBalanceSpan.indexOf("beschikbaar") > -1) {
+            this.i18n = i18n["nl"];
+        }
+        else {
+
+            // Otherwise default to English.
+            this.i18n = i18n["en"];
+        }
     }
 }
 

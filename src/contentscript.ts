@@ -1,14 +1,18 @@
 import { RaisinAddon } from "./addon";
 
-// Create a new instance of the RaisinAddon.
-const ra = new RaisinAddon();
+let ra: RaisinAddon;
 
+// Create a new instance of the RaisinAddon when the site is loaded.
+window.onload = () => {
+    ra = new RaisinAddon();
+};
+
+// Listen to messages from the background script.
+// The account number is sent from the background script, after which the add-on can be initialized.
 chrome.runtime.onMessage.addListener((message, _, __) => {
-    if (message.accountNumber) {
 
-        // On receiving the account number, initialize the add-on.
-        ra.initialize(message.accountNumber);
-        
-        console.log("Raisin add-on loaded!");
+    // On receiving the account number, initialize the add-on.
+    if (message.accountNumber) {
+        ra?.initialize(message.accountNumber);
     }
 });
