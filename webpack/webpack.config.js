@@ -3,7 +3,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
    mode: "production",
    entry: {
-      contentscript: path.resolve(__dirname, "..", "src", "contentscript.ts")
+      contentscript: path.resolve(__dirname, "..", "src", "contentscript.ts"),
+      background: path.resolve(__dirname, "..", "src", "background.ts"),
    },
    output: {
       path: path.join(__dirname, "../dist"),

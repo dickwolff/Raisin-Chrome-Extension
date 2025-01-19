@@ -10,7 +10,10 @@ class RaisinAddon {
 
     private i18n: any;
 
-    public async initialize() {
+    public async initialize(accountNumber: string) {
+
+        // Set customer data if not already set.
+        await this.setInitialUserData(accountNumber);
 
         // Subscribe to route changes so the scripts can run on their respective pages.
         observeUrlChange((url: string) => this.showCurrentPage(url));
@@ -20,9 +23,6 @@ class RaisinAddon {
     }
 
     private async showCurrentPage(route: string) {
-
-        // Load customer data if not already loaded.
-        await this.loadInitialUserData();
 
         route = route.toLocaleLowerCase();
 
@@ -36,28 +36,29 @@ class RaisinAddon {
         }
     }
 
-    private async loadInitialUserData() {
+    private async setInitialUserData(accountNumber: string) {
 
         // If customer and i18n already loaded, don't do it again.
         if (this.customer && this.i18n) {
             return;
         }
 
-        // Get customer data. This contains the account id.
-        const customerResponse = await fetch("https://www.raisin.nl/savingglobal/rest/open_api/v2/customer", {
-            method: "GET",
-            mode: "no-cors",
-        });
-        this.customer = await customerResponse.json();
-
-        // Check the user's locale. Set it to the default locale if it is also supported by the add-on.
-        const customerLocale = `${this.customer.locale}`.toLocaleLowerCase();
-        if (Object.hasOwn(i18n, customerLocale)) {
-            this.i18n = i18n[customerLocale];
-        } else {
-            // Otherwise default to English.
-            this.i18n = i18n["en"];
+        // Set the customer data.
+        this.customer = {
+            bac_number: accountNumber,
         }
+
+        // Otherwise default to English.
+        this.i18n = i18n["en"];
+
+        // // Check the user's locale. Set it to the default locale if it is also supported by the add-on.
+        // const customerLocale = `${this.customer.locale}`.toLocaleLowerCase();
+        // if (Object.hasOwn(i18n, customerLocale)) {
+        //     this.i18n = i18n[customerLocale];
+        // } else {
+        //     // Otherwise default to English.
+        //     this.i18n = i18n["en"];
+        // }
     }
 }
 
