@@ -8,7 +8,6 @@ chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
     // Send the account number to the content script.
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
-            console.log("Sending account to content script:", accountMatch?.[0]);
             chrome.tabs.sendMessage(tabs[0].id, { accountNumber: accountMatch?.[0] });
         }
     });

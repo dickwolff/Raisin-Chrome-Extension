@@ -6,11 +6,20 @@ import { showProductsPage } from "./pages/products";
 
 class RaisinAddon {
 
+    private initialized: boolean = false;
+
     private customer: any;
 
     private i18n: any;
 
     public async initialize(accountNumber: string) {
+
+        if (this.initialized) {
+            return;
+        }
+
+        // Set initialized, so it doesn't run again.
+        this.initialized = true;
 
         // Set customer data if not already set.
         await this.setInitialUserData(accountNumber);
