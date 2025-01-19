@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "__MSG_name__",
     "description": "__MSG_description__",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "icons": {
         "48": "icons/icon-48.png",
         "128": "icons/icon-128.png"
@@ -11,8 +11,7 @@
     "permissions": [
         "tabs",
         "storage",
-        "declarativeNetRequest",
-        "declarativeNetRequestFeedback"
+        "webRequest"
     ],
     "host_permissions": [
         "https://www.raisin.com/*",
@@ -27,13 +26,6 @@
     ],
     "background": {
         "service_worker": "background.js"
-    },
-    "declarative_net_request": {
-        "rule_resources": [{
-            "id": "raisin",
-            "enabled": true,
-            "path": "raisin.json"
-        }]
     },
     "content_scripts": [
         {
