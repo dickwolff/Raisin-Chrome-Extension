@@ -9,10 +9,10 @@
     },
     "default_locale": "en",
     "permissions": [
+        "tabs",
         "storage",
         "declarativeNetRequest",
-        "declarativeNetRequestFeedback",
-        "tabs"
+        "declarativeNetRequestFeedback"
     ],
     "host_permissions": [
         "<all_urls>"
