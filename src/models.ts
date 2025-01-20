@@ -22,6 +22,7 @@ interface RaisinDeposit {
 
 interface RaisinTransaction {
     value_date: Date;
+    creation_date: Date;
     amount: {
         currency: string;
         denomination: string;

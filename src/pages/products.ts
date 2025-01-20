@@ -3,17 +3,17 @@ import { createElement, waitForElement } from "../helpers";
 const showProductsPage = async (i18n: any) => {
 
     // Wait for page to load.
-    await waitForElement("div[class^=styles_productsWrapper]");
+    await waitForElement("div[class*=styles-module_tabWrapper]");
 
     // If the script has already run, don't do it again.
     if (document.querySelector("div[data-raisin-addon=products")) {
         return;
     }
 
-    await waitForElement("div[class^=styles_filterRow]");
-    const filtersDiv = document.querySelector("div[class^=styles_filterRow]");
+    await waitForElement("div[class*=styles-module_filterRow]");
+    const filtersDiv = document.querySelector("div[class*=styles-module_filterRow]");
 
-    const inputClassName = document.querySelector("input[class^=styles_checkboxElement]")?.className;
+    const inputClassName = document.querySelector("input[class*=styles-module_checkboxElement]")?.className;
     const noSourceTaxInput = createElement(
         "input",
         undefined,
@@ -22,7 +22,7 @@ const showProductsPage = async (i18n: any) => {
     noSourceTaxInput.setAttribute("name", "nosourcetax");
     noSourceTaxInput.setAttribute("type", "checkbox");
 
-    const inputLabelClassName = document.querySelector("span[class*=styles_checkboxLarge]")?.className;
+    const inputLabelClassName = document.querySelector("span[class*=styles-module_checkboxLarge]")?.className;
     const noSourceTaxInputLabel = createElement(
         "span",
         undefined,
@@ -32,7 +32,7 @@ const showProductsPage = async (i18n: any) => {
     const labelSpan = createElement("span", i18n.noSourceTaxLabel);
 
     // Show checkbox to filter on source tax, attach click event handler.
-    const labelClassName = document.querySelector("label[class*=styles_labelCheckbox]")?.className;
+    const labelClassName = document.querySelector("label[class*=styles-module_labelCheckbox]")?.className;
     const label = createElement("label", undefined, undefined, labelClassName, undefined, [noSourceTaxInput, noSourceTaxInputLabel, labelSpan]);
     label.setAttribute("for", "nosourcetax");
     label.addEventListener("click", () => {
@@ -41,10 +41,9 @@ const showProductsPage = async (i18n: any) => {
 
     const inputSpan = createElement("span", undefined, undefined, undefined, undefined, [label]);
 
-    const inputDivClassName = document.querySelector("div[class^=styles_filterTerm]")?.className;
+    const inputDivClassName = document.querySelectorAll("div[class*=styles-module_filterTerm]")[1]?.className;
     const inputDiv = createElement("div", undefined, undefined, inputDivClassName, undefined, [inputSpan]);
     filtersDiv?.appendChild(inputDiv);
-
 
     // Add click handler to the other filters. This will also set the attibutes on new loaded offers.
     await extentOtherFilters();
@@ -110,8 +109,8 @@ const extentOtherFilters = async () => {
     }
 
     // Add to "load more"-button.
-    await waitForElement("div[class^=styles_loadMore]");
-    const loadMoreButtonDiv = document.querySelector("div[class^=styles_loadMore]");
+    await waitForElement("div[class*=styles-module_loadMore]");
+    const loadMoreButtonDiv = document.querySelector("div[class^=styles-module_loadMore]");
     (loadMoreButtonDiv?.firstElementChild as HTMLInputElement).addEventListener("click", () => {
         setSourceTaxAttribute();
     });

@@ -287,7 +287,7 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
         const lineSeries = transactionHistoryChart.addLineSeries({ color: "#156cc4" });
 
         let prevValue = 0;
-        const lineSeriesData: { time: Time, value: number, action: string }[] = [];
+        let lineSeriesData: { time: Time, value: number, action: string }[] = [];
         for (let idx = 0; idx < transactions.length; idx++) {
             const transaction = transactions[idx];
             prevValue += (parseFloat(transaction.amount.denomination) || 0);
@@ -309,6 +309,9 @@ const addTransactionHistoryGraph = async (accountDiv: Element, accountId: string
                 action: "TODAY"
             });
         }
+
+        // Sort the table
+        lineSeriesData = lineSeriesData.sort((a, b) => new Date(a.time.toString()).getTime() - new Date(b.time.toString()).getTime());
 
         lineSeries.setData(lineSeriesData);
         transactionHistoryChart.timeScale().fitContent();
