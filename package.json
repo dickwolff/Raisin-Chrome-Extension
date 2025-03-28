@@ -12,7 +12,7 @@
     "author": "Dick Wolff",
     "license": "ISC",
     "devDependencies": {
-        "@types/chrome": "^0.0.312",
+        "@types/chrome": "^0.0.313",
         "copy-webpack-plugin": "^13.0.0",
         "ts-loader": "^9.5.2",
         "typescript": "^5.8.2",
@@ -20,6 +20,6 @@
         "webpack-cli": "^6.0.1"
     },
     "dependencies": {
-        "lightweight-charts": "^5.0.4"
+        "lightweight-charts": "^5.0.5"
     }
 }
