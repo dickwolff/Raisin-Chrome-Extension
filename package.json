@@ -12,14 +12,14 @@
     "author": "Dick Wolff",
     "license": "ISC",
     "devDependencies": {
-        "@types/chrome": "^0.1.27",
+        "@types/chrome": "^0.1.32",
         "copy-webpack-plugin": "^13.0.1",
         "ts-loader": "^9.5.4",
         "typescript": "^5.9.3",
-        "webpack": "^5.102.1",
+        "webpack": "^5.104.1",
         "webpack-cli": "^6.0.1"
     },
     "dependencies": {
-        "lightweight-charts": "^5.0.9"
+        "lightweight-charts": "^5.1.0"
     }
 }
